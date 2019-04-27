@@ -6,6 +6,7 @@ app.config['DEBuG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:build-a-blog@localhost:8889/build-a-blog'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+app.secret_key = 'fakdakt0pmjda>adalkkjfla'
 
 class Blog(db.Model):
 
@@ -44,17 +45,17 @@ def newpost():
         new_post_body = request.form['body']
         new_post = Blog(new_post_name, new_post_body)
 
-        if new_post.is_valid():
+        if (not new_post_name) or (not new_post_body):
+            flash("You must enter both a Name and content for your new Blog post")
+            return render_template('newpost.html', new_post_name=new_post_name, new_post_body=new_post_body)
+    
+        else:     
+            db.session.add(new_post)
+            db.session.commit()
+
             new_url = "/blog?id=" + str(new_post.id)
             return redirect(new_url)
-        #TODO Need to commit to database and work on: 
-        #validation, 
-        #which showed flash message error (need in html?)
-        #and need to set secret key.
-        else:
-            flash("You must enter both a Name and content for your new Blog post")
-
-
+        #TODO Need to show new post on page alone and add to main list page too
     else:
         return render_template('newpost.html', new_post_name=new_post_name, new_post_body=new_post_body)
 
