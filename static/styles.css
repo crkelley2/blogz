@@ -1,16 +1,57 @@
+body {
+    width: 100%;
+    max-width: 1024px;
+    margin: 0 auto;
+    background-color: #5dadc4;
+}
+nav {
+
+    color: #5e3c58;
+}
+
+header,
+main,
+footer {
+    border-style: inset;
+    border-width: 1em;
+    border-top-width: 2em;
+    background-color: #83adb5;
+    font-size: 1.6em;
+}
+header h1 {
+    text-align: center;
+    padding: 0.25em;
+    border-style: inset;
+    border-width: 1.3em;
+    font-size: 2.2em;
+    color: #5e3c58;
+    }
+h2 {
+    margin-top: 1em;
+    padding-top: 1em;
+    text-align: left;
+    font-size: 14 pt;
+    color: #5e3c58;
+    text-decoration: underline;
+    }
+p {
+    margin: 1.5em;
+    font-size: 12 pt;
+    color: black;
+    }
 form {
-    background-color: #eee;
+    background-color: #9a9c9c;
     padding: 20 px;
     margin: 0 auto;
-    width: 540px;
+    width: 605px;
     font: 16px sans-serif;
     border-radius: 10px;
 }
 textarea {
     margin: 10px 0;
-    width: 540px;
-    height: 120px;
+    width: 600px;
+    height: 300px;
 }
 .error {
-    color: red;
+    color: maroon;
 }

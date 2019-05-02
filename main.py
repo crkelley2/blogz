@@ -20,19 +20,21 @@ class Blog(db.Model):
         self.body = body
         self.completed = False
 
-    def is_valid(self):
-        if self.name and self.body:
-            return True
-        else:
-            return False
-
+    
 @app.route('/', methods=['POST', 'GET'])
 def index():
     return render_template('blog.html')
 
 @app.route('/blog', methods=['POST', 'GET'])
-def blog():
-    return render_template('blog.html')
+def display_posts():
+    post_id = request.args.get('id')
+    if (post_id):
+        post = Blog.query.get(post_id)
+        return render_template('single_blog_post.html', post=post)
+
+    else:
+        compiled_posts = Blog.query.all()
+        return render_template('blog.html', compiled_posts=compiled_posts)
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def newpost():
@@ -55,7 +57,8 @@ def newpost():
 
             new_url = "/blog?id=" + str(new_post.id)
             return redirect(new_url)
-        #TODO Need to show new post on page alone and add to main list page too
+        #TODO Need to add to main blog page listing all blogs,
+        #including title as a link to the single blog page with get query for id
     else:
         return render_template('newpost.html', new_post_name=new_post_name, new_post_body=new_post_body)
 

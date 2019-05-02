@@ -3,5 +3,20 @@
 {% block content %}
     <h1>Build A Blog!</h1>
 
+    <h2>Posts</h2>
+    <ul>
+        {% for post in compiled_posts %}
+
+        <li>
+            <h2>
+                <a href="/blog?id={{ post.id }}">{{post.name}}</a>
+            </h2>
+            <p>{{post.body}}</p>
+        </li>
+
+        {% endfor %}
+    </ul>
+
+
 
 {% endblock %}
