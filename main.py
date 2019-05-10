@@ -34,28 +34,42 @@ class User(db.Model):
 @app.before_request
 def require_login():
     allowed_routes = ['login', 'signup']
-    if request.endpoint not in allowed_routes and 'email' not in session:
+    if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    if request.method == 'POST':
-        username = request.form('username')
-        password = request.form('password')
-        user = User.query.filter_by(username=username).first()
-        if user and user.password == password:
-            session['username'] = username
-            flash("Logged in")
-            return redirect('/newpost')
-        elif user and user.password != password:
-            flash('The password you entered is incorrect', 'error')
-        elif not user:
-            flash('The username you entered does not exist', 'error')
+@app.route('/login', methods=['POST', 'GET']) #Messy but works (with old blogs page with all posts; still need to connect posts/owners, etc)
+def login(): #REFACTOR to deal with login errors separately with error messages indicated below!
+    if request.method == 'GET':
+        return render_template('login.html')
+    elif request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        users = User.query.filter_by(username=username)
+        if users.count() == 1:
+            user = users.first()
+            if password == user.password:
+                session['user'] = user.username
+                flash('Welcome Back, '+user.username)
+                return redirect("/")
+        flash('bad username or password')
+        return redirect("/login")
+#TODO REMOVE THIS WHEN DONE! def login(): #POST /login not working yet; 500 error when "submit" with accurate info
+#    if request.method == 'POST':
+#        username = request.form('username')
+#       password = request.form('password')
+#       user = User.query.filter_by(username=username).first()
+#       if user and (User.password == password):
+#           session['username'] = username
+#           flash("Logged in")
+#           return render_template('newpost.html')#actually need to redirect but haven't succeeded with signup; getting error 500 here
+#       elif user and (User.password != password):
+#           flash('The password you entered is incorrect', 'error')
+#       elif not user:
+#           flash('The username you entered does not exist', 'error')
             
-    return render_template('login.html')
-#TODO Don't forget nav bar in login.html to "Create Account" directed to /signup page
+#   return render_template('login.html')
 
-@app.route('/signup', methods=['POST'])
+@app.route('/signup', methods=['POST', 'GET'])
 def signup():
     if request.method == 'POST':
         username = request.form['username']
@@ -67,9 +81,9 @@ def signup():
         verifyError = ""
 
         if (not username) or (username.strip() == ""):
-            nameError = "You must enter a username"
-        elif (len(name) < 3) or (" " in name):
-            nameError = "Your name must contain 3 characters and no spaces"
+            usernameError = "You must enter a username"
+        elif (len(username) < 3) or (" " in username):
+            usernameError = "Your name must contain 3 characters and no spaces"
         
         if (not password) or (password.strip() == ""):
             passwordError = "You must enter a password"
@@ -77,12 +91,12 @@ def signup():
             passwordError = "Your password must contain 3 characters and no spaces"
         
         if (not verify) or (verify.strip() == ""):
-            passwordError = "You must complete this field"
+            verifyError = "You must complete this field"
         elif verify != password:
             verifyError = "The passwords you entered do not match. Please try again"
 
-        if nameError or passwordError or verifyError:
-            return render_template("signup.html", title="SignUp", name=name, nameError=nameError, password="", passwordError=passwordError, verify="", verifyError=verifyError)
+        if usernameError or passwordError or verifyError:
+            return render_template("signup.html", title="SignUp", username=username, usernameError=usernameError, password="", passwordError=passwordError, verify="", verifyError=verifyError)
 
         #TODO Add validation: DONE USING USER SIGNUP MAIN AND SIGNUP HTML...
         #If pull code from user signup, do I change base html re flash messages???
@@ -97,16 +111,12 @@ def signup():
                 db.session.commit()
                 session['username'] = username
                 flash("Logged in")
-                return redirect('/newpost')
+                return render_template('newpost.html')#TODO Fix this to render at /newpost rather than signup; could not get redirect to work!
             else:
                 flash('Username already exists')
                 return render_template('signup.html')
-
-    return render_template('signup.html')
-
-@app.route('/signup', methods=['GET'])
-def signup_page():
-    return render_template('signup.html')
+    else:
+        return render_template('signup.html')
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -126,7 +136,10 @@ def display_posts():
 
 #TODO refactor newpost route handler function since
 #there is a new parameter (owner) to consider 
-#when creating a blog entry. Tried owner below in new_post =
+#when creating a blog entry. I put owner below in new_post argument but
+#need to define owner to be user in session and add owner argument to blog;
+#Also need to pass user logged in when gathering blog entries and single post for existing user...etc
+
 @app.route('/newpost', methods=['POST', 'GET'])
 def newpost():
     new_post_name = ""
@@ -151,6 +164,13 @@ def newpost():
         
     else:
         return render_template('newpost.html', new_post_name=new_post_name, new_post_body=new_post_body)
+
+
+@app.route("/logout", methods=['POST'])
+def logout():
+    del session['user']
+    return redirect("/")
+
 
 if __name__ == '__main__':
     app.run()

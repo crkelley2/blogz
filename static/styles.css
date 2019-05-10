@@ -55,3 +55,6 @@ textarea {
 .error {
     color: maroon;
 }
+.nav-item {
+    margin-left: 50px
+}

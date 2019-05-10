@@ -2,10 +2,15 @@
 <html>
     <head>
         <nav>
-        <a href='/blog'>Return to Home Page</a>
-        <a href='/newpost'>Add a Blog Post</a>
-        <a href='/signup'>Create Account</a>
-        <a href='/login'>Login to Blogz</a>
+              {% if 'user' in session %}
+                {{ session['user'] }}
+                <form action="/logout" method="post" id='logout'>
+                  <input type="submit" value="Log Out" />
+                </form>
+                <a class=nav-item href='/blog'>Return to Home Page</a> | <a class=nav-item href='/newpost'>Add a Blog Post</a>
+              {% else %}
+                <a class=nav-item href='/login'>Login to Blogz</a> | <a class=nav-item href='/signup'>Create Account</a>
+              {% endif %}
         </nav>
         <title>{{title}}</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
