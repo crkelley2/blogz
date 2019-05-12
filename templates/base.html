@@ -3,7 +3,7 @@
     <head>
         <nav>
               {% if 'user' in session %}
-                {{ session['user'] }}
+                {{ session['username'] }}
                 <form action="/logout" method="post" id='logout'>
                   <input type="submit" value="Log Out" />
                 </form>
