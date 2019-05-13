@@ -33,7 +33,7 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'blog', 'index']
+    allowed_routes = ['login', 'signup', 'display_posts', 'index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -109,7 +109,8 @@ def signup():
 
 @app.route('/', methods=['POST', 'GET']) #TODO Refactor index per directions and logout to login, I think. Right now, it goes here w/o all posts.
 def index():
-    return render_template('blog.html')
+    compiled_users = User.query.all()
+    return render_template('index.html', compiled_users=compiled_users)
 
 
 @app.route('/blog', methods=['POST', 'GET'])
@@ -161,7 +162,7 @@ def current_user():
 @app.route("/logout", methods=['POST'])
 def logout():
     del session['username']
-    return redirect("/")
+    return redirect("/blog")
 
 
 if __name__ == '__main__':

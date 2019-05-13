@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Build A Blog!</h1>
+
+    <h2>Users</h2>
+    <ul>
+        {% for user in compiled_users %}
+
+        <li>
+            <h2>
+                {{user.username}}</a>
+            </h2>
+        </li>
+
+        {% endfor %}
+    </ul>
+
+
+
+
+{% endblock %}
