@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Build A Blog!</h1>
+<h1>Build A Blog!</h1>
 
     <h2>Posts</h2>
     <ul>
-        {% for post in compiled_posts %}
+        {% for post in owned_posts %}
 
         <li>
             <h2>
@@ -17,7 +17,6 @@
 
         {% endfor %}
     </ul>
-
 
 
 {% endblock %}

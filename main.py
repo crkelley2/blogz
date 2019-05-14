@@ -116,10 +116,15 @@ def index():
 @app.route('/blog', methods=['POST', 'GET'])
 def display_posts():
     post_id = request.args.get('id')
+    owner_id = request.args.get('user')
     if (post_id):
         post = Blog.query.get(post_id)
         return render_template('single_blog_post.html', post=post)
-
+    elif (owner_id):
+        owned_posts = Blog.query.filter_by(owner_id=owner_id).all()
+        return render_template('single_user_blog_posts.html', owned_posts=owned_posts)
+#add code here user_id = request.args.get ('user') from /blog?user=userId
+#and accompanying template for single_user_blog_posts.html 
     else:
         compiled_posts = Blog.query.all()
         return render_template('blog.html', compiled_posts=compiled_posts)
